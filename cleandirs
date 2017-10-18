@@ -1,0 +1,46 @@
+#! /usr/bin/env php
+<?php
+$path = $argv[1];
+if (! is_dir($path)) {
+    print "Path $path does not exist\n";
+    exit(1);
+}
+
+/**
+ * Defines the number of recent directories to keep
+ */
+define('KEEP_DIRS', 20);
+
+/**
+ * Get the directories for consideration
+ */
+$dirs = scandir($path, SCANDIR_SORT_ASCENDING);
+$dirs = array_filter($dirs, function($path) {
+    return $path !== '.' && $path !== '..';
+});
+$dirs = array_values($dirs);
+
+/**
+ * Get directories to be removed
+ */
+$targets = [];
+$present = count($dirs);
+while ($present > KEEP_DIRS) {
+    $targets[] = realpath($path . "/" . $dirs[count($targets)]);
+    $present--;
+}
+
+if (empty($targets)) {
+    print "Nothing to delete\n";
+    exit(0);
+}
+
+/**
+ * Delete all the directories
+ */
+foreach ($targets as $target) {
+    exec("rm -rf $target");
+}
+
+print count($targets) . " removed from $path\n";
+exit(0);
