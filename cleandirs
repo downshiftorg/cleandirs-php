@@ -19,6 +19,22 @@ $dirs = array_filter($dirs, function($path) {
     return $path !== '.' && $path !== '..';
 });
 $dirs = array_values($dirs);
+$dirs = array_map(function ($short) use ($path) {
+    return realpath($path . "/" . $short);
+}, $dirs);
+
+/**
+ * Sort directories by age
+ */
+function cmp($dir1, $dir2) {
+    $time1 = filemtime($dir1);
+    $time2 = filemtime($dir2);
+    if ($time1 === $time2) {
+        return 0;
+    }
+    return ($time1 < $time2) ? -1 : 1;
+}
+usort($dirs, 'cmp');
 
 /**
  * Get directories to be removed
@@ -26,7 +42,7 @@ $dirs = array_values($dirs);
 $targets = [];
 $present = count($dirs);
 while ($present > KEEP_DIRS) {
-    $targets[] = realpath($path . "/" . $dirs[count($targets)]);
+    $targets[] = $dirs[count($targets)];
     $present--;
 }
 

@@ -1,7 +1,7 @@
 # cleandirs
 
-This PHP script is top notch lolz for cleaning out directories that contain numerically
-named directories - i.e `10/` `11/` `13/` etc..
+This PHP script is top notch lolz for cleaning out directories. Directories are sorted
+by creation time - oldest directories deleted first.
 
 ## Setup
 
